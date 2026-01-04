@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kế Hoạch Xây Dựng Kênh Datyso 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+
+        /* Chart Container Styling - Mandatory */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* Prevent wide charts on large screens */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+
+        /* Animation Classes */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+    <!-- Chosen Palette: Warm Neutrals & Corporate Blue -->
+    <!-- Application Structure Plan: Dashboard layout with a sidebar for the 5 pillars. 
+         Overview Dashboard: Aggregates KPIs and visualizes total scope.
+         Pillar Sections: Detailed interactive views for each specific strategy (Satellite, Official, Product, Accessories, Marketing).
+         Why: Allows the stakeholder to see the big picture first, then drill down into specific tactical execution plans. 
+    -->
+    <!-- Visualization & Content Choices:
+         1. Overview: Bar Chart for Follower Targets (Goal: Compare scale), Doughnut Chart for Budget (Goal: Inform allocation).
+         2. Satellite: Input Calculator (Goal: Change/Plan) to estimate costs for 100 pages.
+         3. Product: Interactive Flow Diagram (Goal: Relationships) using CSS/JS to show Cross-sell logic.
+         4. Accessories: Logistics Timeline (Goal: Change) highlighting speed.
+         5. Marketing: Funnel Viz (Goal: Organize) showing Student -> HR flow.
+         Library: Chart.js for data, Vanilla JS for logic/DOM manipulation. NO SVG/Mermaid.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="bg-stone-50 text-slate-800 font-sans antialiased h-screen flex flex-col md:flex-row overflow-hidden">
+
+    <!-- Sidebar Navigation -->
+    <aside class="w-full md:w-64 bg-slate-900 text-white flex-shrink-0 flex flex-col overflow-y-auto z-20">
+        <div class="p-6 border-b border-slate-700">
+            <h1 class="text-2xl font-bold tracking-wider text-blue-400">DATYSO <span class="text-white text-sm block font-normal mt-1">Plan 2026</span></h1>
+        </div>
+        <nav class="flex-1 p-4 space-y-2">
+            <button onclick="switchTab('overview')" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-slate-800 transition-colors bg-slate-800 text-blue-300 font-semibold" data-tab="overview">
+                📊 Tổng Quan
+            </button>
+            <div class="pt-4 pb-2 px-4 text-xs font-bold text-slate-500 uppercase tracking-widest">Chiến Lược Kênh</div>
+            <button onclick="switchTab('satellite')" class="nav-btn w-full text-left px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors text-slate-300" data-tab="satellite">
+                1. Kênh Vệ Tinh
+            </button>
+            <button onclick="switchTab('official')" class="nav-btn w-full text-left px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors text-slate-300" data-tab="official">
+                2. Kênh Chính Thống
+            </button>
+            <button onclick="switchTab('product')" class="nav-btn w-full text-left px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors text-slate-300" data-tab="product">
+                3. Máy Cắt - Hàn
+            </button>
+            <button onclick="switchTab('accessories')" class="nav-btn w-full text-left px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors text-slate-300" data-tab="accessories">
+                4. Phụ Kiện & Đại Lý
+            </button>
+            <button onclick="switchTab('marketing')" class="nav-btn w-full text-left px-4 py-2 rounded-lg hover:bg-slate-800 transition-colors text-slate-300" data-tab="marketing">
+                5. Kênh Đào Tạo & HR
+            </button>
+        </nav>
+        <div class="p-4 border-t border-slate-700 text-xs text-slate-500">
+            © 2026 Datyso Strategy Team
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto relative">
+        <div class="max-w-7xl mx-auto p-4 md:p-8 pb-20">
+            
+            <!-- SECTION: OVERVIEW -->
+            <div id="overview" class="tab-content fade-in block">
+                <header class="mb-8">
+                    <h2 class="text-3xl font-bold text-slate-900">Tổng Quan Chiến Lược 2026</h2>
+                    <p class="text-slate-600 mt-2 max-w-3xl">
+                        Bảng điều khiển trung tâm tổng hợp 5 mũi nhọn chiến lược phát triển hệ thống kênh Datyso. 
+                        Tại đây, bạn có thể xem nhanh các chỉ số mục tiêu quan trọng về lượng người theo dõi (Followers), 
+                        ngân sách dự kiến và cấu trúc hệ thống.
+                    </p>
+                </header>
+
+                <!-- KPI Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 card-hover">
+                        <div class="text-sm text-slate-500 font-medium uppercase">Tổng Kênh Dự Kiến</div>
+                        <div class="text-3xl font-bold text-blue-600 mt-2">100+</div>
+                        <div class="text-xs text-green-600 mt-1">🔺 Mở rộng quy mô lớn</div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 card-hover">
+                        <div class="text-sm text-slate-500 font-medium uppercase">Mục Tiêu Follower (Vệ tinh)</div>
+                        <div class="text-3xl font-bold text-indigo-600 mt-2">2M+</div>
+                        <div class="text-xs text-slate-400 mt-1">Tổng ~20k/page x 100</div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 card-hover">
+                        <div class="text-sm text-slate-500 font-medium uppercase">Ngân Sách Ads Chính</div>
+                        <div class="text-3xl font-bold text-amber-600 mt-2">100 triệu </div>
+                        <div class="text-xs text-slate-400 mt-1">VNĐ / Năm (3m/tháng)</div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 card-hover">
+                        <div class="text-sm text-slate-500 font-medium uppercase">Trọng Tâm</div>
+                        <div class="text-2xl font-bold text-emerald-600 mt-2">Đa Kênh</div>
+                        <div class="text-xs text-slate-400 mt-1">Bán Hàng - Đào Tạo - Kỹ Thuật</div>
+                    </div>
+                </div>
+
+                <!-- Charts Area -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Target Chart -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4">Phân Bổ Mục Tiêu Follower</h3>
+                        <div class="chart-container">
+                            <canvas id="targetChart"></canvas>
+                        </div>
+                        <p class="text-sm text-slate-500 mt-4 text-center italic">So sánh quy mô tiếp cận giữa kênh Vệ Tinh và Kênh Chính</p>
+                    </div>
+
+                    <!-- Strategy Budget Share -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4">Cấu Trúc Hệ Thống</h3>
+                        <div class="chart-container">
+                            <canvas id="structureChart"></canvas>
+                        </div>
+                        <p class="text-sm text-slate-500 mt-4 text-center italic">Tỷ trọng vai trò của từng nhóm kênh trong hệ sinh thái</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 1: KÊNH VỆ TINH -->
+            <div id="satellite" class="tab-content fade-in hidden">
+                <header class="mb-6 border-b border-stone-200 pb-4">
+                    <span class="bg-blue-100 text-blue-800 text-xs font-bold px-3 py-1 rounded-full">Mũi Nhọn 1</span>
+                    <h2 class="text-2xl font-bold text-slate-900 mt-2">Hệ Thống Kênh Vệ Tinh (Sale Force)</h2>
+                    <p class="text-slate-600 mt-2">
+                        Xây dựng mạng lưới page dày đặc để bao phủ thị trường. Đây là công cụ trực tiếp cho đội ngũ Sales tìm kiếm khách hàng.
+                        Mô hình phân tán quyền quản lý cho từng nhân sự.
+                    </p>
+                </header>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Calculator Panel -->
+                    <div class="lg:col-span-1 bg-white p-6 rounded-xl shadow-sm border border-blue-100">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4">🛠 Tính Toán Ngân Sách</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Số lượng Page mục tiêu</label>
+                                <input type="number" id="satPageInput" value="100" class="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" oninput="updateSatelliteCalc()">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Ngân sách / Page (VNĐ)</label>
+                                <select id="satCostInput" class="w-full p-2 border border-slate-300 rounded focus:ring-2 focus:ring-blue-500 outline-none" onchange="updateSatelliteCalc()">
+                                    <option value="5000000">5,000,000</option>
+                                    <option value="6000000">6,000,000</option>
+                                    <option value="7000000" selected>7,000,000</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Follower / Page</label>
+                                <input type="text" value="10,000 - 20,000" disabled class="w-full p-2 bg-slate-100 border border-slate-300 rounded text-slate-500">
+                            </div>
+                        </div>
+                        <div class="mt-6 pt-6 border-t border-slate-100">
+                            <div class="text-sm text-slate-500">Tổng ngân sách dự kiến:</div>
+                            <div class="text-2xl font-bold text-blue-600" id="satTotalCost">700,000,000 VNĐ</div>
+                        </div>
+                    </div>
+
+                    <!-- Strategy Visual -->
+                    <div class="lg:col-span-2 space-y-6">
+                        <!-- Operational Model -->
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                            <h3 class="text-lg font-bold text-slate-800 mb-4">Mô Hình Vận Hành Sale</h3>
+                            <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-center">
+                                <div class="flex-1 p-4 bg-slate-50 rounded-lg border border-slate-200">
+                                    <div class="text-4xl mb-2">🧑‍💼</div>
+                                    <div class="font-bold text-slate-700">1 Nhân Sự Sale</div>
+                                    <div class="text-sm text-slate-500 mt-1">Quản lý trực tiếp</div>
+                                </div>
+                                <div class="text-2xl text-slate-400">➡️</div>
+                                <div class="flex-1 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                                    <div class="text-4xl mb-2">📱</div>
+                                    <div class="font-bold text-blue-700">1 - 10 Fanpage</div>
+                                    <div class="text-sm text-blue-600 mt-1">Tương tác & Chốt đơn</div>
+                                </div>
+                                <div class="text-2xl text-slate-400">➡️</div>
+                                <div class="flex-1 p-4 bg-green-50 rounded-lg border border-green-200">
+                                    <div class="text-4xl mb-2">💰</div>
+                                    <div class="font-bold text-green-700">Khách Hàng</div>
+                                    <div class="text-sm text-green-600 mt-1">Chuyển đổi trực tiếp</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Key Metrics List -->
+                        <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                            <h3 class="text-sm font-bold text-slate-500 uppercase mb-3">Chỉ Số Hiệu Quả Kỳ Vọng</h3>
+                            <ul class="space-y-3">
+                                <li class="flex items-center justify-between p-3 bg-stone-50 rounded">
+                                    <span class="text-slate-700">🎯 Tổng độ phủ Follower</span>
+                                    <span class="font-bold text-slate-900">~1.000.000 - 2.000.000</span>
+                                </li>
+                                <li class="flex items-center justify-between p-3 bg-stone-50 rounded">
+                                    <span class="text-slate-700">💬 Tương tác hàng ngày</span>
+                                    <span class="font-bold text-slate-900">Cao (Do Sale chủ động)</span>
+                                </li>
+                                <li class="flex items-center justify-between p-3 bg-stone-50 rounded">
+                                    <span class="text-slate-700">🔄 Tỷ lệ chuyển đổi</span>
+                                    <span class="font-bold text-slate-900">Trung bình - Cao</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 2: KÊNH CHÍNH THỐNG -->
+            <div id="official" class="tab-content fade-in hidden">
+                <header class="mb-6 border-b border-stone-200 pb-4">
+                    <span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1 rounded-full">Mũi Nhọn 2</span>
+                    <h2 class="text-2xl font-bold text-slate-900 mt-2">Kênh Chính Thống (Official Brand)</h2>
+                    <p class="text-slate-600 mt-2">
+                        Bộ mặt thương hiệu Datyso. Tập trung vào uy tín, remarketing và khách hàng chất lượng cao (High intent).
+                    </p>
+                </header>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Ads Strategy -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4">Chiến Lược Ads & Remarketing</h3>
+                        <div class="relative pl-6 border-l-2 border-indigo-200 space-y-6">
+                            <div class="relative">
+                                <span class="absolute -left-[31px] bg-indigo-500 h-4 w-4 rounded-full border-2 border-white"></span>
+                                <h4 class="font-bold text-indigo-700">Ngân sách Ads</h4>
+                                <p class="text-sm text-slate-600">3,000,000 VNĐ / Tháng. Mức ngân sách tinh gọn, tập trung vào hiệu quả.</p>
+                            </div>
+                            <div class="relative">
+                                <span class="absolute -left-[31px] bg-indigo-500 h-4 w-4 rounded-full border-2 border-white"></span>
+                                <h4 class="font-bold text-indigo-700">Mục tiêu Remarketing</h4>
+                                <p class="text-sm text-slate-600">Chạy tệp khách đã tương tác với hệ thống kênh vệ tinh để "nhắc nhớ" và chốt đơn.</p>
+                            </div>
+                            <div class="relative">
+                                <span class="absolute -left-[31px] bg-indigo-500 h-4 w-4 rounded-full border-2 border-white"></span>
+                                <h4 class="font-bold text-indigo-700">Khách Hàng Mục Tiêu</h4>
+                                <p class="text-sm text-slate-600">Khách có nhu cầu thực tế nhất (Hot Leads), giảm thiểu chi phí giáo dục thị trường.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Growth Chart -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4">Lộ Trình Tăng Trưởng Follower (Dự kiến)</h3>
+                        <div class="chart-container">
+                            <canvas id="officialGrowthChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 3: MÁY CẮT - HÀN (PRODUCT) -->
+            <div id="product" class="tab-content fade-in hidden">
+                <header class="mb-6 border-b border-stone-200 pb-4">
+                    <span class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full">Mũi Nhọn 3</span>
+                    <h2 class="text-2xl font-bold text-slate-900 mt-2">Hệ Thống Kênh Sản Phẩm & Bán Chéo</h2>
+                    <p class="text-slate-600 mt-2">
+                        Phân chia kênh theo dòng máy và khu vực địa lý (Bắc - Trung - Nam). Tối ưu hóa chiến lược Cross-sell/Up-sell.
+                    </p>
+                </header>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Region Selector -->
+                    <div class="lg:col-span-4 bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4">Phân Vùng Địa Lý</h3>
+                        <div class="space-y-2">
+                            <div class="p-3 bg-red-50 text-red-700 rounded border border-red-100 font-medium cursor-pointer hover:bg-red-100 transition">
+                                📍 Miền Bắc (Hà Nội HQ)
+                            </div>
+                            <div class="p-3 bg-amber-50 text-amber-700 rounded border border-amber-100 font-medium cursor-pointer hover:bg-amber-100 transition">
+                                📍 Miền Trung (Đà Nẵng)
+                            </div>
+                            <div class="p-3 bg-blue-50 text-blue-700 rounded border border-blue-100 font-medium cursor-pointer hover:bg-blue-100 transition">
+                                📍 Miền Nam (HCM)
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-4">
+                            Mỗi vùng sẽ có các kênh riêng biệt để target đúng giọng điệu và nhu cầu địa phương.
+                        </p>
+                    </div>
+
+                    <!-- Cross Sell Logic -->
+                    <div class="lg:col-span-8 bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4">Chiến Lược Upsell (Mô phỏng)</h3>
+                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-4">
+                            <p class="text-sm text-slate-600 mb-2">💡 <span class="italic">Click vào sản phẩm để xem lộ trình bán chéo:</span></p>
+                            <div class="flex flex-wrap gap-3">
+                                <button onclick="showUpsell('cutting')" class="px-4 py-2 bg-white border border-slate-300 rounded shadow-sm hover:bg-blue-50 hover:border-blue-300 transition text-slate-700 font-medium focus:ring-2 focus:ring-blue-500">
+                                    ⚙️ Máy Cắt Không Bavia
+                                </button>
+                                <button onclick="showUpsell('welding')" class="px-4 py-2 bg-white border border-slate-300 rounded shadow-sm hover:bg-blue-50 hover:border-blue-300 transition text-slate-700 font-medium focus:ring-2 focus:ring-blue-500">
+                                    🔥 Máy Hàn Laser
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic Upsell Display -->
+                        <div id="upsellDisplay" class="border-2 border-dashed border-slate-300 rounded-xl p-8 flex items-center justify-center min-h-[200px] transition-all">
+                            <p class="text-slate-400">Chọn một sản phẩm ở trên để xem chiến lược...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 4: PHỤ KIỆN (ACCESSORIES) -->
+            <div id="accessories" class="tab-content fade-in hidden">
+                <header class="mb-6 border-b border-stone-200 pb-4">
+                    <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full">Mũi Nhọn 4</span>
+                    <h2 class="text-2xl font-bold text-slate-900 mt-2">Mạng Lưới Phụ Kiện & Đại Lý</h2>
+                    <p class="text-slate-600 mt-2">
+                        Kết hợp bán hàng và dịch vụ kỹ thuật thông qua mạng lưới đại lý có sẵn. Cam kết tốc độ giao hàng.
+                    </p>
+                </header>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Network Diagram -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4">Mô Hình Hợp Tác Công Nghệ</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center p-3 bg-emerald-50 rounded-lg border border-emerald-100">
+                                <div class="w-10 h-10 flex items-center justify-center bg-emerald-200 rounded-full text-emerald-700 font-bold text-lg mr-3">1</div>
+                                <div>
+                                    <div class="font-bold text-slate-800">Liên Kết Đại Lý</div>
+                                    <div class="text-sm text-slate-600">Tận dụng mạng lưới đối tác đã có sẵn.</div>
+                                </div>
+                            </div>
+                            <div class="flex justify-center"><div class="h-6 w-0.5 bg-emerald-200"></div></div>
+                            <div class="flex items-center p-3 bg-emerald-50 rounded-lg border border-emerald-100">
+                                <div class="w-10 h-10 flex items-center justify-center bg-emerald-200 rounded-full text-emerald-700 font-bold text-lg mr-3">2</div>
+                                <div>
+                                    <div class="font-bold text-slate-800">Tuyển Dụng Kỹ Thuật</div>
+                                    <div class="text-sm text-slate-600">Bổ sung nhân sự kỹ thuật về từng đại lý để vận hành.</div>
+                                </div>
+                            </div>
+                            <div class="flex justify-center"><div class="h-6 w-0.5 bg-emerald-200"></div></div>
+                            <div class="flex items-center p-3 bg-emerald-50 rounded-lg border border-emerald-100">
+                                <div class="w-10 h-10 flex items-center justify-center bg-emerald-200 rounded-full text-emerald-700 font-bold text-lg mr-3">3</div>
+                                <div>
+                                    <div class="font-bold text-slate-800">Vận Hành & Bán Hàng</div>
+                                    <div class="text-sm text-slate-600">Đại lý bán phụ kiện, kỹ thuật hỗ trợ lắp đặt.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Value Prop -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200 flex flex-col justify-center">
+                        <div class="text-center">
+                            <div class="inline-block p-4 bg-orange-100 rounded-full text-4xl mb-4">🚀</div>
+                            <h3 class="text-2xl font-bold text-slate-800">Cam Kết Tốc Độ</h3>
+                            <p class="text-lg text-orange-600 font-bold mt-2">Giao Hàng: 1 - 2 Ngày</p>
+                            <p class="text-slate-500 mt-4 text-sm px-8">
+                                Nhờ mạng lưới đại lý trải rộng và đội ngũ kỹ thuật tại chỗ, khách hàng sẽ nhận được phụ kiện và dịch vụ nhanh nhất, giảm thời gian chết của máy móc.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 5: ĐÀO TẠO & HR (MARKETING) -->
+            <div id="marketing" class="tab-content fade-in hidden">
+                <header class="mb-6 border-b border-stone-200 pb-4">
+                    <span class="bg-purple-100 text-purple-800 text-xs font-bold px-3 py-1 rounded-full">Mũi Nhọn 5</span>
+                    <h2 class="text-2xl font-bold text-slate-900 mt-2">Kênh Đào Tạo & Thu Hút Nhân Sự</h2>
+                    <p class="text-slate-600 mt-2">
+                        Marketing không chỉ để bán hàng mà còn để xây dựng nguồn lực. Kết hợp với trường nghề để tạo phễu nhân sự.
+                    </p>
+                </header>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                     <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                        <h3 class="text-lg font-bold text-slate-800 mb-6">Phễu Chuyển Đổi Nhân Sự</h3>
+                        
+                        <!-- Funnel Visual using CSS -->
+                        <div class="flex flex-col items-center space-y-2">
+                            <!-- Step 1 -->
+                            <div class="w-full bg-purple-100 p-4 rounded-lg text-center border border-purple-200 relative">
+                                <span class="font-bold text-purple-800">1. Thu Hút Học Viên</span>
+                                <div class="text-xs text-purple-600 mt-1">Kênh Marketing, Trường Cao Đẳng, Trường Nghề</div>
+                            </div>
+                            <div class="text-purple-300">⬇️</div>
+                            <!-- Step 2 -->
+                            <div class="w-4/5 bg-purple-200 p-4 rounded-lg text-center border border-purple-300">
+                                <span class="font-bold text-purple-900">2. Đào Tạo Datyso</span>
+                                <div class="text-xs text-purple-700 mt-1">Hướng dẫn vận hành máy, kỹ thuật hàn/cắt</div>
+                            </div>
+                            <div class="text-purple-300">⬇️</div>
+                            <!-- Step 3 -->
+                            <div class="w-3/5 bg-purple-600 p-4 rounded-lg text-center border border-purple-700 shadow-lg">
+                                <span class="font-bold text-white">3. Bổ Trợ Nhân Sự</span>
+                                <div class="text-xs text-purple-100 mt-1">Cung cấp cho HCNS & Đại lý</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-200">
+                        <h3 class="text-lg font-bold text-slate-800 mb-4">Đối Tượng Hợp Tác</h3>
+                        <ul class="space-y-4">
+                            <li class="flex items-start">
+                                <span class="text-2xl mr-3">🎓</span>
+                                <div>
+                                    <div class="font-bold text-slate-800">Trường Cao Đẳng Nghề</div>
+                                    <p class="text-sm text-slate-600">Hợp tác tổ chức workshop, tài trợ máy móc thực hành để tiếp cận sinh viên sớm.</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-2xl mr-3">🏭</span>
+                                <div>
+                                    <div class="font-bold text-slate-800">Trung Tâm Giới Thiệu Việc Làm</div>
+                                    <p class="text-sm text-slate-600">Đăng tuyển dụng và đào tạo kỹ năng ngắn hạn cho người tìm việc.</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-2xl mr-3">🛠</span>
+                                <div>
+                                    <div class="font-bold text-slate-800">Cộng Đồng Cơ Khí</div>
+                                    <p class="text-sm text-slate-600">Xây dựng thương hiệu tuyển dụng trong các group thợ lành nghề.</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // --- Navigation Logic ---
+        function switchTab(tabId) {
+            // Hide all contents
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('block');
+            });
+            // Show selected
+            const selected = document.getElementById(tabId);
+            selected.classList.remove('hidden');
+            selected.classList.add('block');
+            
+            // Re-trigger fade animation
+            selected.classList.remove('fade-in');
+            void selected.offsetWidth; // trigger reflow
+            selected.classList.add('fade-in');
+
+            // Update Nav State
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-slate-800', 'text-blue-300', 'font-semibold');
+                btn.classList.add('text-slate-300');
+            });
+            const activeBtn = document.querySelector(`.nav-btn[data-tab="${tabId}"]`);
+            if(activeBtn) {
+                activeBtn.classList.add('bg-slate-800', 'text-blue-300', 'font-semibold');
+                activeBtn.classList.remove('text-slate-300');
+            }
+        }
+
+        // --- Calculation Logic (Satellite) ---
+        function updateSatelliteCalc() {
+            const pages = parseInt(document.getElementById('satPageInput').value) || 0;
+            const cost = parseInt(document.getElementById('satCostInput').value) || 0;
+            const total = pages * cost;
+            
+            // Format currency
+            const formatter = new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            });
+            
+            document.getElementById('satTotalCost').innerText = formatter.format(total);
+        }
+
+        // --- Interactive Upsell Logic ---
+        function showUpsell(type) {
+            const display = document.getElementById('upsellDisplay');
+            display.classList.remove('border-dashed');
+            
+            if (type === 'cutting') {
+                display.innerHTML = `
+                    <div class="flex flex-col items-center w-full animate-fade">
+                        <div class="p-4 bg-white border border-slate-300 rounded shadow w-full max-w-sm text-center">
+                            <div class="font-bold text-slate-800">Bước 1: Bán Máy Cắt</div>
+                            <div class="text-sm text-slate-500">Khách mua máy cắt không bavia</div>
+                        </div>
+                        <div class="h-8 w-0.5 bg-slate-300 my-1"></div>
+                        <div class="text-2xl text-blue-500 mb-1">⬇️</div>
+                        <div class="p-4 bg-blue-50 border border-blue-300 rounded shadow w-full max-w-sm text-center relative overflow-hidden">
+                            <div class="absolute top-0 right-0 bg-red-500 text-white text-[10px] px-2 py-1 font-bold">UPSALE</div>
+                            <div class="font-bold text-blue-800">Bước 2: Chốt Chéo</div>
+                            <div class="text-sm text-blue-600 mt-1">Tư vấn thêm: <br><strong>Máy Tẩy Laser / Máy Hàn Laser/ Máy Cắt PLC </strong></div>
+                            <div class="text-xs text-slate-500 mt-2 italic">"Anh đã có máy cắt rồi, thêm máy tẩy để hoàn thiện sản phẩm nhanh hơn..."</div>
+                        </div>
+                    </div>
+                `;
+            } else if (type === 'welding') {
+                display.innerHTML = `
+                    <div class="flex flex-col items-center w-full animate-fade">
+                        <div class="p-4 bg-white border border-slate-300 rounded shadow w-full max-w-sm text-center">
+                            <div class="font-bold text-slate-800">Bước 1: Bán Máy Hàn Laser</div>
+                            <div class="text-sm text-slate-500">Sản phẩm giá trị cao</div>
+                        </div>
+                        <div class="h-8 w-0.5 bg-slate-300 my-1"></div>
+                        <div class="text-2xl text-amber-500 mb-1">⬇️</div>
+                        <div class="p-4 bg-amber-50 border border-amber-300 rounded shadow w-full max-w-sm text-center">
+                             <div class="absolute top-0 right-0 bg-red-500 text-white text-[10px] px-2 py-1 font-bold">CROSS-SALE</div>
+                            <div class="font-bold text-amber-800">Bước 2: Giới thiệu tay hàn robot</div>
+                            <div class="text-sm text-amber-700 mt-1"> Phụ kiện đi kèm : Kính bảo hộ, Súng hàn, Dây hàn</div>
+                            <div class="text-xs text-slate-500 mt-2 italic">Dòng tiền đều đặn từ phụ kiện tiêu hao.</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Re-apply fade animation manually if needed, simplified here
+            const content = display.firstElementChild;
+            content.style.animation = 'fadeIn 0.5s';
+        }
+
+        // --- Charts Initialization ---
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // 1. Target Chart (Overview)
+            const ctxTarget = document.getElementById('targetChart').getContext('2d');
+            new Chart(ctxTarget, {
+                type: 'bar',
+                data: {
+                    labels: ['Kênh Vệ Tinh (Tổng)', 'Kênh Chính Thống'],
+                    datasets: [{
+                        label: 'Mục Tiêu Followers',
+                        data: [2000000, 100000], // 100 pages * 20k vs 100k
+                        backgroundColor: ['#3b82f6', '#f59e0b'],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.raw.toLocaleString() + ' Followers';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value / 1000 + 'k';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 2. Structure/Budget Chart (Overview) - Conceptual breakdown
+            const ctxStruct = document.getElementById('structureChart').getContext('2d');
+            new Chart(ctxStruct, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Kênh Vệ Tinh (Sale)', 'Kênh Chính (Brand)', 'Marketing & Đào Tạo', 'Phát triển Đại Lý'],
+                    datasets: [{
+                        data: [65, 10, 15, 10], // Estimated percentages based on 700m budget vs 36m ads vs overhead
+                        backgroundColor: [
+                            '#3b82f6', // Blue - Satellite (Big budget)
+                            '#f59e0b', // Amber - Official
+                            '#a855f7', // Purple - Marketing
+                            '#10b981'  // Green - Agents
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        title: { display: true, text: 'Ước Tính Tỷ Trọng Nguồn Lực' }
+                    }
+                }
+            });
+
+            // 3. Official Channel Growth Simulation
+            const ctxGrowth = document.getElementById('officialGrowthChart').getContext('2d');
+            new Chart(ctxGrowth, {
+                type: 'line',
+                data: {
+                    labels: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'],
+                    datasets: [{
+                        label: 'Mục Tiêu 100k Followers',
+                        data: [5000, 12000, 22000, 31000, 42000, 55000, 65000, 74000, 82000, 90000, 96000, 100000],
+                        borderColor: '#f59e0b',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Initial calc update
+            updateSatelliteCalc();
+        });
+    </script>
+</body>
+</html>
